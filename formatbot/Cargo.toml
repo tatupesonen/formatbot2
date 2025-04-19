@@ -1,0 +1,14 @@
+[package]
+name = "formatbot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+poise = "0.6.1"
+regex = "1.11.1"
+tokio = { version = "1.44.2", features = ["full"] }
+tracing = "0.1.41"
+tracing-subscriber = "0.3.19"
+formatcore = { path = "../formatcore"}
+reqwest = { version = "0.12.15", features = ["rustls-tls"], default-features = false}
+futures = "0.3.31"

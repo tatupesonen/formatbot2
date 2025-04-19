@@ -1,0 +1,40 @@
+services:
+  formatter-rust:
+    build:
+      context: .
+      dockerfile: docker/formatter.Dockerfile
+      args:
+        BACKEND: rust
+    image: formatter-rust:latest
+    environment:
+      PORT: 3000
+      BIND_ADDR: 0.0.0.0:3000
+    ports:
+      - 3000:3000
+    container_name: formatter-rust
+  formatter-typescript:
+    build:
+      context: .
+      dockerfile: docker/formatter.Dockerfile
+      args:
+        BACKEND: typescript
+    image: formatter-typescript:latest
+    environment:
+      PORT: 3001
+      BIND_ADDR: 0.0.0.0:3001
+    ports:
+      - 3001:3001
+    container_name: formatter-typescript
+  formatter-php:
+    build:
+      context: .
+      dockerfile: docker/formatter.Dockerfile
+      args:
+        BACKEND: php
+    image: formatter-php:latest
+    environment:
+      PORT: 3002
+      BIND_ADDR: 0.0.0.0:3002
+    ports:
+      - 3002:3002
+    container_name: formatter-php
