@@ -1,5 +1,8 @@
-use axum::{http::StatusCode, response::{IntoResponse, Response}};
-use std::{fmt::Error, str::FromStr};
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
+use std::str::FromStr;
 use thiserror::Error;
 
 pub trait Formatter {
@@ -24,11 +27,7 @@ pub enum FormatError {
 
 impl IntoResponse for FormatError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::BAD_REQUEST,
-            format!("{}", self),
-        )
-            .into_response()
+        (StatusCode::BAD_REQUEST, format!("{}", self)).into_response()
     }
 }
 

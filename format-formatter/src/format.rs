@@ -1,11 +1,13 @@
-use std::{alloc::GlobalAlloc, fs::File, io::{Read, Seek, SeekFrom, Write}, time::Duration};
+use std::io::{Read, Seek, SeekFrom, Write};
 
-use axum::{http::StatusCode, response::{IntoResponse, Response}};
 use format_core::FormatError;
 use tempfile::NamedTempFile;
 use tracing::info;
 
-pub fn write_code_to_tempfile(code: &str, suffix: &str) -> Result<NamedTempFile, format_core::FormatError> {
+pub fn write_code_to_tempfile(
+    code: &str,
+    suffix: &str,
+) -> Result<NamedTempFile, format_core::FormatError> {
     // Save the contents in a temporary file
     let mut temp = tempfile::NamedTempFile::with_suffix(suffix)?;
     temp.write_all(code.as_bytes())?;
@@ -17,38 +19,40 @@ pub fn read_formatted(mut codefile: NamedTempFile) -> Result<String, format_core
     let mut code = String::new();
 
     // Seek to start
-    codefile.seek(SeekFrom::Start(0))
-        .map_err(|e| FormatError::CannotReadFileContents(e))?;
-    codefile.read_to_string(&mut code)
-        .map_err(|e| FormatError::CannotReadFileContents(e))?;
+    codefile
+        .seek(SeekFrom::Start(0))
+        .map_err(FormatError::CannotReadFileContents)?;
+    codefile
+        .read_to_string(&mut code)
+        .map_err(FormatError::CannotReadFileContents)?;
     info!("Read contents from file at {:?}", codefile.path());
     Ok(code)
 }
 
 pub fn read_formatted_stdout(vec: Vec<u8>) -> Result<String, format_core::FormatError> {
     let code = String::from_utf8(vec).map_err(|e| FormatError::FormatterOutputNotUTF8)?;
-    return Ok(code)
+    Ok(code)
 }
 
 #[cfg(feature = "rust")]
 pub mod enabled_formatter {
-    use std::{io::Write, process::Command};
+    use std::process::Command;
 
     use format_core::FormatError;
 
     use crate::format::read_formatted;
     use tracing::{info, instrument};
 
-    use super::{read_formatted_stdout, write_code_to_tempfile};
+    
 
-    pub const FORMATTER: &'static str = "Rust";
-    pub const SUFFIX: &'static str = ".rs";
+    pub const FORMATTER: &str = "Rust";
+    pub const SUFFIX: &str = ".rs";
 
     pub struct Formatter;
     impl format_core::Formatter for Formatter {
         #[instrument]
         fn format(code: &str) -> Result<String, format_core::FormatError> {
-            let mut file_with_code = super::write_code_to_tempfile(code, SUFFIX)?;
+            let file_with_code = super::write_code_to_tempfile(code, SUFFIX)?;
 
             info!("Running formatter");
             let cmd = Command::new("rustfmt")
@@ -56,10 +60,11 @@ pub mod enabled_formatter {
                 .arg("--emit")
                 .arg("files")
                 .output()
-                .map_err(|e| FormatError::FormatterFailed(e))?;
+                .map_err(FormatError::FormatterFailed)?;
             if !cmd.status.success() {
-                let err = String::from_utf8(cmd.stderr).map_err(|e| FormatError::FormatterOutputNotUTF8)?;
-                return Err(FormatError::FormatterError(err))
+                let err = String::from_utf8(cmd.stderr)
+                    .map_err(|e| FormatError::FormatterOutputNotUTF8)?;
+                return Err(FormatError::FormatterError(err));
             }
 
             let formatted = read_formatted(file_with_code)?;
@@ -97,8 +102,9 @@ pub mod enabled_formatter {
                 .output()
                 .map_err(|e| FormatError::FormatterFailed(e))?;
             if !cmd.status.success() {
-                let err = String::from_utf8(cmd.stderr).map_err(|e| FormatError::FormatterOutputNotUTF8)?;
-                return Err(FormatError::FormatterError(err))
+                let err = String::from_utf8(cmd.stderr)
+                    .map_err(|e| FormatError::FormatterOutputNotUTF8)?;
+                return Err(FormatError::FormatterError(err));
             }
 
             let formatted = read_formatted(file_with_code)?;
@@ -136,8 +142,9 @@ pub mod enabled_formatter {
                 .output()
                 .map_err(|e| FormatError::FormatterFailed(e))?;
             if !cmd.status.success() {
-                let err = String::from_utf8(cmd.stderr).map_err(|e| FormatError::FormatterOutputNotUTF8)?;
-                return Err(FormatError::FormatterError(err))
+                let err = String::from_utf8(cmd.stderr)
+                    .map_err(|e| FormatError::FormatterOutputNotUTF8)?;
+                return Err(FormatError::FormatterError(err));
             }
 
             let formatted = read_formatted(file_with_code)?;

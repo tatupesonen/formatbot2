@@ -3,13 +3,11 @@
 mod commands;
 
 use poise::serenity_prelude::{self as serenity, GuildId};
-use tokio::sync::RwLock;
 use std::{
     collections::HashMap,
     env::var,
-    sync::{Arc, Mutex},
-    time::Duration,
 };
+use tokio::sync::RwLock;
 
 // Types used by all command functions
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -84,15 +82,23 @@ async fn main() {
         .setup(move |ctx, _ready, framework| {
             // Enabled formatters
             let mut fmt = HashMap::new();
-            fmt.insert("rust".to_string(), "http://localhost:3000".to_string());
-            fmt.insert("typescript".to_string(), "http://localhost:3001".to_string());
-            fmt.insert("ts".to_string(), "http://localhost:3001".to_string());
-            fmt.insert("js".to_string(), "http://localhost:3001".to_string());
-            fmt.insert("php".to_string(), "http://localhost:3002".to_string());
+            fmt.insert("rust".to_owned(), "http://localhost:3000".to_owned());
+            fmt.insert(
+                "typescript".to_owned(),
+                "http://localhost:3001".to_owned(),
+            );
+            fmt.insert("ts".to_owned(), "http://localhost:3001".to_owned());
+            fmt.insert("js".to_owned(), "http://localhost:3001".to_owned());
+            fmt.insert("php".to_owned(), "http://localhost:3002".to_owned());
             Box::pin(async move {
                 println!("Logged in as {}", _ready.user.name);
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                poise::builtins::register_in_guild(ctx, &framework.options().commands, GuildId::new(1363124863832817905)).await?;
+                poise::builtins::register_in_guild(
+                    ctx,
+                    &framework.options().commands,
+                    GuildId::new(1363124863832817905),
+                )
+                .await?;
                 Ok(Data {
                     enabled_formatters: RwLock::new(fmt),
                 })
@@ -103,8 +109,7 @@ async fn main() {
 
     let token = var("DISCORD_TOKEN")
         .expect("Missing `DISCORD_TOKEN` env var, see README for more information.");
-    let intents =
-        serenity::GatewayIntents::non_privileged();
+    let intents = serenity::GatewayIntents::non_privileged();
 
     let client = serenity::ClientBuilder::new(token, intents)
         .framework(framework)

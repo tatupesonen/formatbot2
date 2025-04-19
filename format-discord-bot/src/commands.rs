@@ -1,12 +1,11 @@
 use std::time::Duration;
 
-use format_core::*;
 use futures::future::join_all;
 use poise::serenity_prelude::{
-    self, ButtonStyle, CreateActionRow, CreateButton, CreateEmbed, Message,
+    Message,
 };
 use regex::Regex;
-use tokio::time::{self, timeout};
+use tokio::time::{timeout};
 
 use crate::{Context, Error};
 
@@ -33,7 +32,7 @@ pub async fn help(
 /// Format some code
 #[poise::command(context_menu_command = "format")]
 pub async fn format(ctx: Context<'_>, message: Message) -> Result<(), Error> {
-    let _ = ctx.defer_ephemeral().await?;
+    ctx.defer_ephemeral().await?;
 
     let re = Regex::new(r"(?s)```(\w*)\n(.*?)\n```").unwrap();
 

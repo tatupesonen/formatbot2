@@ -13,7 +13,7 @@ tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 tower-http = { version = "0.6.2", features = ["trace"] }
 
 [features]
-default = []
+default = ["rust"]
 rust = []
 typescript = []
 javascript = []
