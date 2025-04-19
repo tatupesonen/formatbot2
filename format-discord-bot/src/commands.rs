@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use formatcore::*;
+use format_core::*;
 use futures::future::join_all;
 use poise::serenity_prelude::{
     self, ButtonStyle, CreateActionRow, CreateButton, CreateEmbed, Message,
@@ -37,7 +37,7 @@ pub async fn format(ctx: Context<'_>, message: Message) -> Result<(), Error> {
 
     let re = Regex::new(r"(?s)```(\w*)\n(.*?)\n```").unwrap();
 
-    let captures: Vec<formatcore::CodeBlock> = re
+    let captures: Vec<format_core::CodeBlock> = re
         .captures_iter(&message.content)
         .map(|caps| {
             let lang = caps.get(1).and_then(|m| {
@@ -47,7 +47,7 @@ pub async fn format(ctx: Context<'_>, message: Message) -> Result<(), Error> {
 
             let code = caps.get(2).map(|m| m.as_str());
 
-            formatcore::CodeBlock {
+            format_core::CodeBlock {
                 code,
                 language: lang,
             }

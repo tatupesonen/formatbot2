@@ -480,10 +480,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "formatbot"
+name = "format-core"
 version = "0.1.0"
 dependencies = [
- "formatcore",
+ "axum",
+ "thiserror 2.0.12",
+]
+
+[[package]]
+name = "format-discord-bot"
+version = "0.1.0"
+dependencies = [
+ "format-core",
  "futures",
  "poise",
  "regex",
@@ -494,19 +502,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "formatcore"
+name = "format-formatter"
 version = "0.1.0"
 dependencies = [
  "axum",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "formatter"
-version = "0.1.0"
-dependencies = [
- "axum",
- "formatcore",
+ "format-core",
  "tempfile",
  "tokio",
  "tower-http",

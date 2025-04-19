@@ -1,7 +1,7 @@
 use axum::{
     extract::{MatchedPath, Request}, response::Html, routing::{get, post}, Router
 };
-use formatcore::{FormatError, Formatter};
+use format_core::{FormatError, Formatter};
 use tower_http::trace::TraceLayer;
 use tracing::{debug, error, info, instrument};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};

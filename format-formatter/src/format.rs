@@ -1,11 +1,11 @@
 use std::{alloc::GlobalAlloc, fs::File, io::{Read, Seek, SeekFrom, Write}, time::Duration};
 
 use axum::{http::StatusCode, response::{IntoResponse, Response}};
-use formatcore::FormatError;
+use format_core::FormatError;
 use tempfile::NamedTempFile;
 use tracing::info;
 
-pub fn write_code_to_tempfile(code: &str, suffix: &str) -> Result<NamedTempFile, formatcore::FormatError> {
+pub fn write_code_to_tempfile(code: &str, suffix: &str) -> Result<NamedTempFile, format_core::FormatError> {
     // Save the contents in a temporary file
     let mut temp = tempfile::NamedTempFile::with_suffix(suffix)?;
     temp.write_all(code.as_bytes())?;
@@ -13,7 +13,7 @@ pub fn write_code_to_tempfile(code: &str, suffix: &str) -> Result<NamedTempFile,
     Ok(temp)
 }
 
-pub fn read_formatted(mut codefile: NamedTempFile) -> Result<String, formatcore::FormatError> {
+pub fn read_formatted(mut codefile: NamedTempFile) -> Result<String, format_core::FormatError> {
     let mut code = String::new();
 
     // Seek to start
@@ -25,7 +25,7 @@ pub fn read_formatted(mut codefile: NamedTempFile) -> Result<String, formatcore:
     Ok(code)
 }
 
-pub fn read_formatted_stdout(vec: Vec<u8>) -> Result<String, formatcore::FormatError> {
+pub fn read_formatted_stdout(vec: Vec<u8>) -> Result<String, format_core::FormatError> {
     let code = String::from_utf8(vec).map_err(|e| FormatError::FormatterOutputNotUTF8)?;
     return Ok(code)
 }
@@ -34,7 +34,7 @@ pub fn read_formatted_stdout(vec: Vec<u8>) -> Result<String, formatcore::FormatE
 pub mod enabled_formatter {
     use std::{io::Write, process::Command};
 
-    use formatcore::FormatError;
+    use format_core::FormatError;
 
     use crate::format::read_formatted;
     use tracing::{info, instrument};
@@ -45,9 +45,9 @@ pub mod enabled_formatter {
     pub const SUFFIX: &'static str = ".rs";
 
     pub struct Formatter;
-    impl formatcore::Formatter for Formatter {
+    impl format_core::Formatter for Formatter {
         #[instrument]
-        fn format(code: &str) -> Result<String, formatcore::FormatError> {
+        fn format(code: &str) -> Result<String, format_core::FormatError> {
             let mut file_with_code = super::write_code_to_tempfile(code, SUFFIX)?;
 
             info!("Running formatter");
@@ -74,7 +74,7 @@ pub mod enabled_formatter {
 pub mod enabled_formatter {
     use std::{io::Write, process::Command};
 
-    use formatcore::FormatError;
+    use format_core::FormatError;
 
     use crate::format::read_formatted;
     use tracing::{info, instrument};
@@ -85,9 +85,9 @@ pub mod enabled_formatter {
     pub const SUFFIX: &'static str = ".ts";
 
     pub struct Formatter;
-    impl formatcore::Formatter for Formatter {
+    impl format_core::Formatter for Formatter {
         #[instrument]
-        fn format(code: &str) -> Result<String, formatcore::FormatError> {
+        fn format(code: &str) -> Result<String, format_core::FormatError> {
             let mut file_with_code = super::write_code_to_tempfile(code, SUFFIX)?;
 
             info!("Running formatter on {file_with_code:?}");
@@ -113,7 +113,7 @@ pub mod enabled_formatter {
 pub mod enabled_formatter {
     use std::{io::Write, process::Command};
 
-    use formatcore::FormatError;
+    use format_core::FormatError;
 
     use crate::format::read_formatted;
     use tracing::{info, instrument};
@@ -124,9 +124,9 @@ pub mod enabled_formatter {
     pub const SUFFIX: &'static str = ".php";
 
     pub struct Formatter;
-    impl formatcore::Formatter for Formatter {
+    impl format_core::Formatter for Formatter {
         #[instrument]
-        fn format(code: &str) -> Result<String, formatcore::FormatError> {
+        fn format(code: &str) -> Result<String, format_core::FormatError> {
             let mut file_with_code = super::write_code_to_tempfile(code, SUFFIX)?;
 
             info!("Running formatter on {file_with_code:?}");
